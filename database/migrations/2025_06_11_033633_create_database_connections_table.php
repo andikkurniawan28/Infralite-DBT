@@ -13,13 +13,18 @@ return new class extends Migration
     {
         Schema::create('database_connections', function (Blueprint $table) {
             $table->id();
-            $table->string('db_type');
+            $table->foreignId('database_type_id')->constrained()->onDelete('cascade');
+            $table->text('description')->nullable();
             $table->string('host');
             $table->string('username');
             $table->string('password');
             $table->string('db_name');
-            $table->text('description')->nullable();
-            $table->timestamps();
+            $table->string('charset')->nullable();
+            $table->string('collation')->nullable();
+            $table->string('schema')->nullable();
+            $table->string('status');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

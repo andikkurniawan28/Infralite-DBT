@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('backup_logs', function (Blueprint $table) {
+        Schema::create('database_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('database_connection_id')->constrained()->onDelete('cascade');
-            $table->string('status');
+            $table->string('icon');
+            $table->string('driver');
+            $table->string('brand')->unique();
+            $table->string('default_port')->nullable();
+            $table->string('default_charset')->nullable();
+            $table->string('default_collation')->nullable();
+            $table->string('default_schema')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
@@ -25,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('backup_logs');
+        Schema::dropIfExists('database_types');
     }
 };

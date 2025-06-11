@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DatabaseConnection;
+use App\Models\DatabaseType;
 use Illuminate\Http\Request;
+use App\Models\DatabaseConnection;
 
 class DatabaseConnectionController extends Controller
 {
@@ -12,15 +13,9 @@ class DatabaseConnectionController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $databaseTypes = DatabaseType::all();
+        $connections = DatabaseConnection::with('database_type')->get();
+        return view('database_connection.index', compact('databaseTypes', 'connections'));
     }
 
     /**
@@ -28,23 +23,21 @@ class DatabaseConnectionController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'database_type_id' => 'required|exists:database_types,id',
+            'description'      => 'nullable|string',
+            'host'             => 'required|string',
+            'username'         => 'required|string',
+            'password'         => 'required|string',
+            'db_name'          => 'required|string',
+            'charset'          => 'nullable|string',
+            'collation'        => 'nullable|string',
+            'schema'           => 'nullable|string',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(DatabaseConnection $databaseConnection)
-    {
-        //
-    }
+        DatabaseConnection::create($request->all());
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DatabaseConnection $databaseConnection)
-    {
-        //
+        return redirect()->back()->with('success', 'Database connection added successfully.');
     }
 
     /**
@@ -52,7 +45,21 @@ class DatabaseConnectionController extends Controller
      */
     public function update(Request $request, DatabaseConnection $databaseConnection)
     {
-        //
+        $request->validate([
+            'database_type_id' => 'required|exists:database_types,id',
+            'description'      => 'nullable|string',
+            'host'             => 'required|string',
+            'username'         => 'required|string',
+            'password'         => 'required|string',
+            'db_name'          => 'required|string',
+            'charset'          => 'nullable|string',
+            'collation'        => 'nullable|string',
+            'schema'           => 'nullable|string',
+        ]);
+
+        $databaseConnection->update($request->all());
+
+        return redirect()->back()->with('success', 'Database connection updated successfully.');
     }
 
     /**
@@ -60,6 +67,7 @@ class DatabaseConnectionController extends Controller
      */
     public function destroy(DatabaseConnection $databaseConnection)
     {
-        //
+        $databaseConnection->delete();
+        return redirect()->back()->with('success', 'Database connection deleted successfully.');
     }
 }
