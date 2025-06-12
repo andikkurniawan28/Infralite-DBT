@@ -86,7 +86,7 @@
                 icon: 'success',
                 title: 'Success',
                 text: '{{ session('success') }}',
-                timer: 3000,
+                timer: 2000,
                 showConfirmButton: false
             });
         @endif
@@ -96,7 +96,7 @@
                 icon: 'error',
                 title: 'Oops...',
                 text: '{{ session('error') }}',
-                timer: 3000,
+                timer: 2000,
                 showConfirmButton: false
             });
         @endif
@@ -116,6 +116,7 @@
             });
         @endif
     </script>
+    @yield('script')
 
 </body>
 

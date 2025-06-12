@@ -70,4 +70,18 @@ class DatabaseConnectionController extends Controller
         $databaseConnection->delete();
         return redirect()->back()->with('success', 'Database connection deleted successfully.');
     }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(DatabaseConnection $databaseConnection)
+    {
+        // Memuat relasi database_type untuk mendapatkan icon, brand, dll
+        $databaseConnection->load('database_type');
+
+        return view('database_connection.show', [
+            'connection' => $databaseConnection,
+        ]);
+    }
+
 }

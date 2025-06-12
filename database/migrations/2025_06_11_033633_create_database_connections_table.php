@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('charset')->nullable();
             $table->string('collation')->nullable();
             $table->string('schema')->nullable();
-            $table->string('status');
+            // $table->string('status');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });

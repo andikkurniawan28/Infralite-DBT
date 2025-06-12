@@ -27,6 +27,7 @@
                     <th>Type</th>
                     <th>Host</th>
                     <th>DB Name</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -39,7 +40,17 @@
                         </td>
                         <td>{{ $connection->host }}</td>
                         <td>{{ $connection->db_name }}</td>
+                        <td class="status-cell" data-id="{{ $connection->id }}">
+                            <span class="spinner-border spinner-border-sm text-secondary me-1" role="status"></span>
+                            <span>Connecting...</span>
+                        </td>
                         <td>
+                            <form action="{{ route('manual_backup.process') }}" method="POST" class="d-inline">
+                                @csrf @method('POST')
+                                <input type="hidden" value="{{ $connection->id }}" name="database_connection_id" readonly>
+                                <button class="btn btn-sm btn-primary" onclick="return confirm('Backup this Database?')">Manual Backup</button>
+                            </form>
+                            <a href="{{ route('database_connection.show', $connection->id) }}" class="btn btn-sm btn-info">Info</a>
                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $connection->id }}">Edit</button>
                             <form action="{{ route('database_connection.destroy', $connection) }}" method="POST" class="d-inline">
                                 @csrf
@@ -126,4 +137,36 @@
         </div>
 
     </main>
+@endsection
+
+@section('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.status-cell').forEach(cell => {
+                const id = cell.getAttribute('data-id');
+                const url = `/connecting_database/${id}`; // Pastikan route ini tersedia
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        cell.innerHTML = '';
+
+                        if (data.status === 'success') {
+                            cell.innerHTML = `<span class="text-success">
+                                <i class="bi bi-check-circle-fill"></i> Connected
+                            </span>`;
+                        } else {
+                            cell.innerHTML = `<span class="text-danger">
+                                <i class="bi bi-x-circle-fill"></i> Failed
+                            </span>`;
+                        }
+                    })
+                    .catch(() => {
+                        cell.innerHTML = `<span class="text-danger">
+                            <i class="bi bi-x-circle-fill"></i> Error
+                        </span>`;
+                    });
+            });
+        });
+    </script>
 @endsection
