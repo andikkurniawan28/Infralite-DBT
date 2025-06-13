@@ -48,7 +48,7 @@
         <div class="container-fluid">
             <i class="bi bi-shield-lock-fill fs-1 text-white"></i>
             <a class="navbar-brand fw-bold" href="{{ route('welcome') }}">{{ env('APP_NAME') }}</a>
-
+            {{-- <span id="current-time" class="text-white ms-3 small"></span> --}}
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
@@ -117,6 +117,19 @@
             });
         @endif
     </script>
+    {{-- <script>
+        function updateCurrentTime() {
+            const now = new Date();
+            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const day = days[now.getDay()];
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('current-time').textContent = `Today is ${day}, ${hours}:${minutes}`;
+        }
+
+        updateCurrentTime();
+        setInterval(updateCurrentTime, 60000); // update every 1 minute
+    </script> --}}
     @yield('script')
 
 </body>

@@ -1,14 +1,15 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\BackupLogController;
+use App\Http\Controllers\ManualBackupController;
+use App\Http\Controllers\ScheduledBackupController;
 use App\Http\Controllers\ConnectingDatabaseController;
 use App\Http\Controllers\DatabaseConnectionController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\ManualBackupController;
-use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\WelcomeController;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,3 +33,4 @@ Route::post('/manual_backup', [ManualBackupController::class, 'process'])->name(
 Route::get('/backup_log', BackupLogController::class)->name('backup_log.index')->middleware(['auth']);
 Route::resource('/user', UserController::class)->middleware(['auth']);
 Route::resource('/schedule', ScheduleController::class)->middleware(['auth']);
+Route::get('/scheduled_backup/{schedule_id}', [ScheduledBackupController::class, 'process'])->name('scheduled_backup.process');
