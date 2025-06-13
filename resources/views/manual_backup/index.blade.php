@@ -1,7 +1,7 @@
 @extends('template.master')
 
 @section('content')
-<main class="container py-4">
+<main class="container py-1">
 
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb bg-white rounded px-3 py-2 shadow-sm">

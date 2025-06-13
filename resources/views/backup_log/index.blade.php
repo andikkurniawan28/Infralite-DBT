@@ -29,7 +29,7 @@
                             <th>DB Connection</th>
                             <th>User</th>
                             <th>Status</th>
-                            <th>Created At</th>
+                            <th>Timestamp</th>
                         </tr>
                     </thead>
                 </table>

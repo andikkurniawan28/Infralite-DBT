@@ -72,7 +72,7 @@
                         <div class="card-icon"><i class="bi bi-person-gear"></i></div>
                         <h5 class="card-title">User</h5>
                         {{-- <p class="card-text">Manage application users.</p> --}}
-                        <a href="#" class="btn btn-primary">Manage</a>
+                        <a href="{{ route('user.index') }}" class="btn btn-primary">Manage</a>
                     </div>
                 </div>
             </div>
