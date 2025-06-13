@@ -5,6 +5,7 @@ use App\Http\Controllers\ConnectingDatabaseController;
 use App\Http\Controllers\DatabaseConnectionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ManualBackupController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
@@ -30,3 +31,4 @@ Route::get('/manual_backup', [ManualBackupController::class, 'index'])->name('ma
 Route::post('/manual_backup', [ManualBackupController::class, 'process'])->name('manual_backup.process')->middleware(['auth']);
 Route::get('/backup_log', BackupLogController::class)->name('backup_log.index')->middleware(['auth']);
 Route::resource('/user', UserController::class)->middleware(['auth']);
+Route::resource('/schedule', ScheduleController::class)->middleware(['auth']);

@@ -24,7 +24,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended()->with('success', 'Login successful.');
+            return redirect()->intended();
         }
 
         return back()->with('error', 'Invalid credentials or your account is inactive.');
@@ -37,6 +37,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', 'You have been logged out successfully.');
+        return redirect()->route('login');
     }
 }

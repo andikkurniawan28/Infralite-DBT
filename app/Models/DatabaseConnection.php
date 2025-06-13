@@ -14,4 +14,8 @@ class DatabaseConnection extends Model
     public function database_type(){
         return $this->belongsTo(DatabaseType::class);
     }
+
+    public function schedule(){
+        return $this->hasMany(Schedule::class);
+    }
 }

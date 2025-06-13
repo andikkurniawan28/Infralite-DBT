@@ -17,9 +17,63 @@ class ManualBackupController extends Controller
         return view('manual_backup.index', compact('connections'));
     }
 
+    // public function process(Request $request)
+    // {
+    //     set_time_limit(0); // 0 artinya unlimited waktu eksekusi
+
+    //     $request->validate([
+    //         'database_connection_id' => 'required|exists:database_connections,id',
+    //     ]);
+
+    //     $conn = DatabaseConnection::findOrFail($request->database_connection_id);
+
+    //     // Buat nama file
+    //     $fileName = 'backup_' . Str::slug($conn->db_name) . '_' . date('Ymd_His') . '.sql';
+    //     $path = 'storage/app/tmp/' . $fileName;
+
+    //     // Jalankan Artisan Command
+    //     if($conn->database_type->driver == "mysql")
+    //     {
+    //         $exitCode = Artisan::call('native:mysqldump', [
+    //             '--host' => $conn->host,
+    //             '--user' => $conn->username,
+    //             '--pass' => $conn->password,
+    //             '--db'   => $conn->db_name,
+    //             '--path' => $path,
+    //         ]);
+    //     } elseif($conn->database_type->driver == "pgsql") {
+    //         $exitCode = Artisan::call('native:pgdump', [
+    //             '--host' => $conn->host,
+    //             '--port' => $conn->port,
+    //             '--user' => $conn->username,
+    //             '--pass' => $conn->password,
+    //             '--db'   => $conn->db_name,
+    //             '--path' => $path,
+    //         ]);
+    //     } elseif($conn->database_type->driver == "sqlite") {
+    //         //
+    //     } else return back()->with('fail', 'Sorry this driver is not supported');
+
+    //     if ($exitCode === 0) {
+    //         BackupLog::insert([
+    //             'user_id' => Auth::user()->id,
+    //             'database_connection_id' => $request->database_connection_id,
+    //             'status' => 'success',
+    //         ]);
+    //         return response()->download(base_path($path))->deleteFileAfterSend(true);
+    //     } else {
+    //         BackupLog::insert([
+    //             'user_id' => Auth::user()->id,
+    //             'database_connection_id' => $request->database_connection_id,
+    //             'status' => 'fail',
+    //         ]);
+    //         return back()->with('error', 'Backup gagal. Lihat log untuk detail.');
+    //     }
+    // }
+
     public function process(Request $request)
     {
-        set_time_limit(0); // 0 artinya unlimited waktu eksekusi
+        set_time_limit(0); // unlimited execution time
 
         $request->validate([
             'database_connection_id' => 'required|exists:database_connections,id',
@@ -27,34 +81,59 @@ class ManualBackupController extends Controller
 
         $conn = DatabaseConnection::findOrFail($request->database_connection_id);
 
-        // Buat nama file
-        $fileName = 'backup_' . Str::slug($conn->db_name) . '_' . date('Ymd_His') . '.sql';
+        // Buat nama file backup
+        $fileName = 'backup_' . Str::slug($conn->db_name) . '_' . date('Ymd_His');
+
+        // Siapkan path berdasarkan tipe driver
+        if ($conn->database_type->driver === 'sqlite') {
+            $fileName .= '.sqlite';
+        } else {
+            $fileName .= '.sql';
+        }
+
         $path = 'storage/app/tmp/' . $fileName;
 
-        // Jalankan Artisan Command
-        $exitCode = Artisan::call('native:mysqldump', [
-            '--host' => $conn->host,
-            '--user' => $conn->username,
-            '--pass' => $conn->password,
-            '--db'   => $conn->db_name,
-            '--path' => $path,
+        // Jalankan Artisan Command sesuai tipe driver
+        if ($conn->database_type->driver === "mysql") {
+            $exitCode = Artisan::call('native:mysqldump', [
+                '--host' => $conn->host,
+                '--user' => $conn->username,
+                '--pass' => $conn->password,
+                '--db'   => $conn->db_name,
+                '--path' => $path,
+            ]);
+        } elseif ($conn->database_type->driver === "pgsql") {
+            $exitCode = Artisan::call('native:pgdump', [
+                '--host' => $conn->host,
+                '--port' => $conn->port,
+                '--user' => $conn->username,
+                '--pass' => $conn->password,
+                '--db'   => $conn->db_name,
+                '--path' => $path,
+            ]);
+        } elseif ($conn->database_type->driver === "sqlite") {
+            $exitCode = Artisan::call('native:sqlitedump', [
+                '--source' => $conn->host, // `host` menyimpan full path file .sqlite
+                '--path'   => $path,
+            ]);
+        } else {
+            return back()->with('fail', 'Sorry, this driver is not supported.');
+        }
+
+        // Simpan log dan respon hasil
+        BackupLog::insert([
+            'user_id' => Auth::id(),
+            'database_connection_id' => $request->database_connection_id,
+            'status' => $exitCode === 0 ? 'success' : 'fail',
+            'method' => 'manual',
         ]);
 
         if ($exitCode === 0) {
-            BackupLog::insert([
-                'user_id' => Auth::user()->id,
-                'database_connection_id' => $request->database_connection_id,
-                'status' => 'success',
-            ]);
             return response()->download(base_path($path))->deleteFileAfterSend(true);
         } else {
-            BackupLog::insert([
-                'user_id' => Auth::user()->id,
-                'database_connection_id' => $request->database_connection_id,
-                'status' => 'fail',
-            ]);
-            return back()->with('error', 'Backup gagal. Lihat log untuk detail.');
+            return back()->with('error', 'Backup failed. Check the logs for more details.');
         }
     }
+
 
 }

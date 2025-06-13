@@ -50,7 +50,7 @@
                         <div class="card-icon"><i class="bi bi-clock-history"></i></div>
                         <h5 class="card-title">Scheduled Backup</h5>
                         {{-- <p class="card-text">Set up automatic scheduled backups.</p> --}}
-                        <a href="#" class="btn btn-primary">Schedule</a>
+                        <a href="{{ route('schedule.index') }}" class="btn btn-primary">Schedule</a>
                     </div>
                 </div>
             </div>

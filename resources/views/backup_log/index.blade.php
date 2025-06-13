@@ -11,7 +11,7 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Backup Logs
+                    Backup Log
                 </li>
             </ol>
         </nav>
@@ -25,9 +25,10 @@
                 <table id="backupLogsTable" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>ID</th>
                             <th>DB Connection</th>
                             <th>User</th>
+                            <th>Method</th>
                             <th>Status</th>
                             <th>Timestamp</th>
                         </tr>
@@ -49,9 +50,10 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('backup_log.index') }}",
+                order: [[4, 'desc']],
                 columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
+                        data: 'id',
+                        name: 'id',
                         orderable: false,
                         searchable: false
                     },
@@ -62,6 +64,10 @@
                     {
                         data: 'user_name',
                         name: 'user.name'
+                    },
+                    {
+                        data: 'method',
+                        name: 'method'
                     },
                     {
                         data: 'status',

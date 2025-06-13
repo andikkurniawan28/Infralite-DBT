@@ -3,63 +3,73 @@
 namespace App\Http\Controllers;
 
 use App\Models\Schedule;
+use App\Models\DatabaseConnection;
 use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Tampilkan daftar schedule
     public function index()
     {
-        //
+        $connections = DatabaseConnection::all();
+        $schedules = Schedule::with('database_connection')->latest()->get();
+        return view('schedule.index', compact('schedules', 'connections'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Tampilkan form tambah
     public function create()
     {
-        //
+        $connections = DatabaseConnection::all();
+        return view('schedule.create', compact('connections'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Simpan schedule baru
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'database_connection_id' => 'required|exists:database_connections,id',
+            'schedules' => 'required|array',
+            'schedules.*.day' => 'required|string',
+            'schedules.*.hour' => 'required|string',
+        ]);
+
+        foreach ($request->schedules as $schedule) {
+            Schedule::create([
+                'database_connection_id' => $request->database_connection_id,
+                'day' => $schedule['day'],
+                'hour' => $schedule['hour'],
+            ]);
+        }
+
+        return redirect()->route('schedule.index')->with('success', 'Schedules successfully created.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Schedule $schedule)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    // Tampilkan form edit
     public function edit(Schedule $schedule)
     {
-        //
+        $connections = DatabaseConnection::all();
+        return view('schedule.edit', compact('schedule', 'connections'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // Update schedule
     public function update(Request $request, Schedule $schedule)
     {
-        //
+        $request->validate([
+            'database_connection_id' => 'required|exists:database_connections,id',
+            'day' => 'required|string',
+            'hour' => 'required|string',
+        ]);
+
+        $schedule->update($request->all());
+
+        return redirect()->route('schedule.index')->with('success', 'Schedule successfully updated.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Hapus schedule
     public function destroy(Schedule $schedule)
     {
-        //
+        $schedule->delete();
+        return redirect()->route('schedule.index')->with('success', 'Schedule successfully deleted.');
     }
 }
