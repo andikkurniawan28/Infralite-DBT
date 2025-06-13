@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class BackupLog extends Model
 {
     use HasFactory;
+
+    public function database_connection(){
+        return $this->belongsTo(DatabaseConnection::class);
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }

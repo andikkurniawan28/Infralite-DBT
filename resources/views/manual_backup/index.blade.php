@@ -16,7 +16,7 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <form action="{{ route('manual_backup.process') }}" method="POST">
+            <form id="backupForm" action="{{ route('manual_backup.process') }}" method="POST">
                 @csrf @method('POST')
 
                 <div class="mb-3">
@@ -31,20 +31,72 @@
                     </select>
                 </div>
 
-                {{-- <div class="mb-3">
-                    <label for="destination" class="form-label">Save To</label>
-                    <select name="destination" id="destination" class="form-select" required>
-                        <option value="local">Local Storage</option>
-                        <option value="google_drive">Google Drive</option>
-                    </select>
-                </div> --}}
-
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" id="backupButton">
                     <i class="bi bi-play-circle me-1"></i> Process Backup
                 </button>
             </form>
+
         </div>
     </div>
 
 </main>
 @endsection
+
+@section('script')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('backupForm');
+    const button = document.getElementById('backupButton');
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const connId = document.getElementById('database_connection_id').value;
+        if (!connId) {
+            alert('Please select a database connection.');
+            return;
+        }
+
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Processing...';
+
+        const formData = new FormData();
+        formData.append('database_connection_id', connId);
+        formData.append('_token', '{{ csrf_token() }}');
+
+        try {
+            const res = await fetch(`{{ route('manual_backup.process') }}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!res.ok) throw new Error('Backup failed.');
+
+            const blob = await res.blob();
+            const disposition = res.headers.get("Content-Disposition");
+            const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] || 'backup.sql';
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            button.innerHTML = '<i class="bi bi-check-circle me-1"></i> Selesai';
+            setTimeout(() => {
+                button.disabled = false;
+                button.innerHTML = '<i class="bi bi-play-circle me-1"></i> Process Backup';
+            }, 3000);
+        } catch (err) {
+            alert('Gagal melakukan backup: ' + err.message);
+            button.disabled = false;
+            button.innerHTML = '<i class="bi bi-play-circle me-1"></i> Process Backup';
+        }
+    });
+});
+</script>
+@endsection
+

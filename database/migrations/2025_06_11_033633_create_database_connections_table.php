@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('username');
             $table->string('password');
             $table->string('db_name');
+            $table->string('port')->nullable();
             $table->string('charset')->nullable();
             $table->string('collation')->nullable();
             $table->string('schema')->nullable();

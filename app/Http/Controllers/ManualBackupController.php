@@ -2,100 +2,59 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BackupLog;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\DatabaseConnection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
 
 class ManualBackupController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $connections = DatabaseConnection::all();
         return view('manual_backup.index', compact('connections'));
     }
 
-    public function process(Request $request){
+    public function process(Request $request)
+    {
+        set_time_limit(0); // 0 artinya unlimited waktu eksekusi
+
         $request->validate([
             'database_connection_id' => 'required|exists:database_connections,id',
         ]);
 
         $conn = DatabaseConnection::findOrFail($request->database_connection_id);
 
-        $this->setupTempDatabaseConnection($conn);
+        // Buat nama file
+        $fileName = 'backup_' . Str::slug($conn->db_name) . '_' . date('Ymd_His') . '.sql';
+        $path = 'storage/app/tmp/' . $fileName;
 
-        try {
-            $fileName = $this->generateBackupFile($conn);
-
-            return response()->download(
-                storage_path("app/tmp/{$fileName}"),
-                $fileName
-            )->deleteFileAfterSend(true);
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Backup gagal: ' . $e->getMessage());
-        }
-    }
-
-    private function setupTempDatabaseConnection($conn){
-        config([
-            'database.connections.temp_dump' => [
-                'driver'    => $conn->database_type->driver,
-                'host'      => $conn->host,
-                'database'  => $conn->db_name,
-                'username'  => $conn->username,
-                'password'  => $conn->password,
-                'charset'   => $conn->charset ?? 'utf8mb4',
-                'collation' => $conn->collation ?? 'utf8mb4_unicode_ci',
-            ]
+        // Jalankan Artisan Command
+        $exitCode = Artisan::call('native:mysqldump', [
+            '--host' => $conn->host,
+            '--user' => $conn->username,
+            '--pass' => $conn->password,
+            '--db'   => $conn->db_name,
+            '--path' => $path,
         ]);
 
-        DB::purge('temp_dump');
-    }
-
-    private function generateBackupFile($conn){
-        $dbName = $conn->db_name;
-        $tables = DB::connection('temp_dump')->select('SHOW TABLES');
-        $tableKey = 'Tables_in_' . $dbName;
-
-        $fileName = 'backup_' . $dbName . '_' . date('Ymd_His') . '.sql';
-        $filePath = storage_path("app/tmp/{$fileName}");
-
-        Storage::makeDirectory('tmp');
-        $handle = fopen($filePath, 'w');
-
-        fwrite($handle, "-- Manual SQL Dump for {$dbName} --\n\n");
-
-        foreach ($tables as $table) {
-            $tableName = $table->$tableKey;
-
-            $this->writeCreateTable($handle, $tableName);
-            $this->writeTableData($handle, $tableName);
+        if ($exitCode === 0) {
+            BackupLog::insert([
+                'user_id' => Auth::user()->id,
+                'database_connection_id' => $request->database_connection_id,
+                'status' => 'success',
+            ]);
+            return response()->download(base_path($path))->deleteFileAfterSend(true);
+        } else {
+            BackupLog::insert([
+                'user_id' => Auth::user()->id,
+                'database_connection_id' => $request->database_connection_id,
+                'status' => 'fail',
+            ]);
+            return back()->with('error', 'Backup gagal. Lihat log untuk detail.');
         }
-
-        fclose($handle);
-
-        return $fileName;
     }
 
-    private function writeCreateTable($handle, $tableName){
-        $create = DB::connection('temp_dump')->select("SHOW CREATE TABLE `$tableName`");
-        fwrite($handle, $create[0]->{'Create Table'} . ";\n");
-    }
-
-    private function writeTableData($handle, $tableName){
-        DB::connection('temp_dump')
-            ->table($tableName)
-            ->orderBy(DB::raw('1'))
-            ->chunk(500, function ($rows) use ($handle, $tableName) {
-                foreach ($rows as $row) {
-                    $values = array_map(function ($val) {
-                        return is_null($val) ? 'NULL' : "'" . addslashes($val) . "'";
-                    }, (array)$row);
-
-                    fwrite($handle, "INSERT INTO `$tableName` VALUES (" . implode(', ', $values) . ");\n");
-                }
-            });
-
-        fwrite($handle, "\n");
-    }
 }

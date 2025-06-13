@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->foreignId('database_connection_id')->constrained()->onDelete('cascade');
+            $table->string('day');
+            $table->string('hour');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('backup_logs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('database_connection_id')->constrained()->onDelete('cascade');
             $table->string('status');
             $table->timestamp('created_at')->useCurrent();

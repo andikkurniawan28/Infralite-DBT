@@ -61,7 +61,7 @@
                         <div class="card-icon"><i class="bi bi-journal-text"></i></div>
                         <h5 class="card-title">Backup Log</h5>
                         {{-- <p class="card-text">View backup history and status.</p> --}}
-                        <a href="#" class="btn btn-primary">View Logs</a>
+                        <a href="{{ route('backup_log.index') }}" class="btn btn-primary">View Logs</a>
                     </div>
                 </div>
             </div>

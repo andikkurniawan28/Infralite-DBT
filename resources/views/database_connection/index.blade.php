@@ -45,11 +45,6 @@
                             <span>Connecting...</span>
                         </td>
                         <td>
-                            <form action="{{ route('manual_backup.process') }}" method="POST" class="d-inline">
-                                @csrf @method('POST')
-                                <input type="hidden" value="{{ $connection->id }}" name="database_connection_id" readonly>
-                                <button class="btn btn-sm btn-primary" onclick="return confirm('Backup this Database?')">Manual Backup</button>
-                            </form>
                             <a href="{{ route('database_connection.show', $connection->id) }}" class="btn btn-sm btn-info">Info</a>
                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $connection->id }}">Edit</button>
                             <form action="{{ route('database_connection.destroy', $connection) }}" method="POST" class="d-inline">
@@ -74,17 +69,22 @@
                                     <div class="modal-body">
                                         <select name="database_type_id" class="form-select mb-2" required>
                                             @foreach ($databaseTypes as $type)
-                                                <option value="{{ $type->id }}" {{ $type->id == $connection->database_type_id ? 'selected' : '' }}>
+                                                <option value="{{ $type->id }}"
+                                                    data-port="{{ $type->default_port }}"
+                                                    data-charset="{{ $type->default_charset }}"
+                                                    data-collation="{{ $type->default_collation }}"
+                                                    data-schema="{{ $type->default_schema }}"
+                                                    {{ isset($connection) && $type->id == $connection->database_type_id ? 'selected' : '' }}>
                                                     {{ $type->brand }}
                                                 </option>
                                             @endforeach
                                         </select>
-                                        {{-- <input type="text" name="name" value="{{ $connection->name }}" class="form-control mb-2" placeholder="Name" required> --}}
                                         <textarea name="description" class="form-control mb-2" placeholder="Description">{{ $connection->description }}</textarea>
                                         <input type="text" name="host" value="{{ $connection->host }}" class="form-control mb-2" placeholder="Host" required>
                                         <input type="text" name="username" value="{{ $connection->username }}" class="form-control mb-2" placeholder="Username" required>
                                         <input type="password" name="password" value="{{ $connection->password }}" class="form-control mb-2" placeholder="Password" required>
                                         <input type="text" name="db_name" value="{{ $connection->db_name }}" class="form-control mb-2" placeholder="Database Name" required>
+                                        <input type="text" name="port" value="{{ $connection->port }}" class="form-control mb-2" placeholder="Port (optional)">
                                         <input type="text" name="charset" value="{{ $connection->charset }}" class="form-control mb-2" placeholder="Charset (optional)">
                                         <input type="text" name="collation" value="{{ $connection->collation }}" class="form-control mb-2" placeholder="Collation (optional)">
                                         <input type="text" name="schema" value="{{ $connection->schema }}" class="form-control mb-2" placeholder="Schema (optional)">
@@ -115,15 +115,22 @@
                             <select name="database_type_id" class="form-select mb-2" required>
                                 <option value="">-- Select Database Type --</option>
                                 @foreach ($databaseTypes as $type)
-                                    <option value="{{ $type->id }}">{{ $type->brand }}</option>
+                                    <option value="{{ $type->id }}"
+                                        data-port="{{ $type->default_port }}"
+                                        data-charset="{{ $type->default_charset }}"
+                                        data-collation="{{ $type->default_collation }}"
+                                        data-schema="{{ $type->default_schema }}"
+                                        {{ isset($connection) && $type->id == $connection->database_type_id ? 'selected' : '' }}>
+                                        {{ $type->brand }}
+                                    </option>
                                 @endforeach
                             </select>
-                            {{-- <input type="text" name="name" class="form-control mb-2" placeholder="Name" required> --}}
                             <textarea name="description" class="form-control mb-2" placeholder="Description (optional)"></textarea>
                             <input type="text" name="host" class="form-control mb-2" placeholder="Host" required>
                             <input type="text" name="username" class="form-control mb-2" placeholder="Username" required>
                             <input type="password" name="password" class="form-control mb-2" placeholder="Password" required>
                             <input type="text" name="db_name" class="form-control mb-2" placeholder="Database Name" required>
+                            <input type="text" name="port" class="form-control mb-2" placeholder="Port (optional)">
                             <input type="text" name="charset" class="form-control mb-2" placeholder="Charset (optional)">
                             <input type="text" name="collation" class="form-control mb-2" placeholder="Collation (optional)">
                             <input type="text" name="schema" class="form-control mb-2" placeholder="Schema (optional)">
@@ -169,4 +176,47 @@
             });
         });
     </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle create form
+        const createSelect = document.querySelector('#createModal select[name="database_type_id"]');
+        if (createSelect) {
+            createSelect.addEventListener('change', function () {
+                const selected = this.options[this.selectedIndex];
+
+                // const portInput = document.getElementById('#createModal input[name="port"]');
+                const portInput = document.querySelector('#createModal input[name="port"]');
+                const charsetInput = document.querySelector('#createModal input[name="charset"]');
+                const collationInput = document.querySelector('#createModal input[name="collation"]');
+                const schemaInput = document.querySelector('#createModal input[name="schema"]');
+
+                if (portInput) portInput.value = selected.dataset.port || '';
+                if (charsetInput) charsetInput.value = selected.dataset.charset || '';
+                if (collationInput) collationInput.value = selected.dataset.collation || '';
+                if (schemaInput) schemaInput.value = selected.dataset.schema || '';
+            });
+        }
+
+        // Handle all edit modals
+        document.querySelectorAll('div[id^="editModal"] select[name="database_type_id"]').forEach(select => {
+            select.addEventListener('change', function () {
+                const selected = this.options[this.selectedIndex];
+                const form = this.closest('form');
+
+                const portInput = form.querySelector('input[name="port"]');
+                const charsetInput = form.querySelector('input[name="charset"]');
+                const collationInput = form.querySelector('input[name="collation"]');
+                const schemaInput = form.querySelector('input[name="schema"]');
+
+                if (portInput) portInput.value = selected.dataset.port || '';
+                if (charsetInput) charsetInput.value = selected.dataset.charset || '';
+                if (collationInput) collationInput.value = selected.dataset.collation || '';
+                if (schemaInput) schemaInput.value = selected.dataset.schema || '';
+            });
+        });
+    });
+</script>
+
+
 @endsection

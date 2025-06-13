@@ -40,45 +40,56 @@
         }
     </style>
 </head>
-
 <body>
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-gradient shadow-sm">
-        <div class="container-fluid">
-            <i class="bi bi-shield-lock-fill fs-1 text-white"></i>
-            <a class="navbar-brand fw-bold" href="{{ route('welcome') }}">{{ env('APP_NAME') }}</a>
-
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle fs-4 me-2"></i>
-                        <span>{{ Auth::user()->name }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf @method('POST')
-                                <button type="submit" class="dropdown-item">Logout</button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
     <main class="container py-3">
-        @yield('content')
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+            <div class="card shadow-sm p-4" style="min-width: 350px; max-width: 400px; width: 100%;">
+                <div class="text-center mb-4">
+                    <i class="bi bi-shield-lock-fill fs-1 text-primary"></i>
+                    <h5 class="mt-2 fw-bold">{{ env('APP_NAME') }}</h5>
+                </div>
+
+                <form method="POST" action="{{ route('login_process') }}">
+                    @csrf
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address</label>
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            name="email"
+                            placeholder="Enter email"
+                            required
+                            autofocus
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            placeholder="Enter password"
+                            required
+                        >
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <small class="text-muted">© 2025 {{ env('APP_NAME') }}</small>
+                </div>
+            </div>
+        </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="footer-gradient text-white text-center py-3 mt-auto">
-        <small>&copy; 2025 {{ env('APP_NAME') }}. All rights reserved.</small>
-    </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -117,8 +128,4 @@
             });
         @endif
     </script>
-    @yield('script')
-
 </body>
-
-</html>

@@ -40,6 +40,11 @@
             </div>
 
             <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Port</div>
+                <div class="col-md-9">{{ $connection->port }}</div>
+            </div>
+
+            <div class="row mb-3">
                 <div class="col-md-3 fw-bold">Username</div>
                 <div class="col-md-9">{{ $connection->username }}</div>
             </div>
