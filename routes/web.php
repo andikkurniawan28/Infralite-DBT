@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BackupFileController;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -34,18 +35,10 @@ Route::post('/manual_backup', [ManualBackupController::class, 'process'])->name(
 Route::get('/backup_log', BackupLogController::class)->name('backup_log.index')->middleware(['auth']);
 Route::resource('/user', UserController::class)->middleware(['auth']);
 Route::resource('/schedule', ScheduleController::class)->middleware(['auth']);
+Route::get('/backup_file', [BackupFileController::class, 'index'])->name('backup_file.index')->middleware(['auth']);
+Route::get('/backup_file/data', [BackupFileController::class, 'data'])->name('backup_file.data');
+Route::post('/backup_file/bulk_delete', [BackupFileController::class, 'bulkDelete'])->name('backup_file.bulk_delete')->middleware(['auth']);
+Route::delete('/backup_file/delete_all', [BackupFileController::class, 'deleteAll'])->name('backup_file.delete_all')->middleware(['auth']);
 Route::get('/scheduled_backup', [ScheduledBackupController::class, 'process'])->name('scheduled_backup.process');
 Route::get('/scheduled_backup/download/{filename}', [ScheduledBackupController::class, 'download'])->name('scheduled_backup.download');
-// Route::get('/backup/files', function () {
-//     $files = Storage::disk('public')->files('tmp');
-//     $fileData = collect($files)->map(function ($file) {
-//         return [
-//             'name' => basename($file),
-//             'url' => asset('storage/' . $file),
-//             'size' => Storage::disk('public')->size($file),
-//             'last_modified' => Storage::disk('public')->lastModified($file),
-//         ];
-//     })->sortByDesc('last_modified')->values();
-//     return response()->json($fileData);
-// })->name('backup.files');
 

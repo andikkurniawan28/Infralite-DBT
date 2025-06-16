@@ -39,9 +39,51 @@
             margin-bottom: 0.5rem;
         }
     </style>
+    <style>
+        .floating-clock {
+            position: fixed;
+            top: 20px; /* jarak dari atas */
+            left: 50%; /* pusat horizontal */
+            transform: translateX(-50%); /* geser ke kiri setengah lebar sendiri */
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+            }
+            100% {
+                box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <div class="floating-clock" id="floatingClock">--:--:--</div>
+    <script>
+        function updateFloatingClock() {
+            const now = new Date();
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const day = days[now.getDay()];
+            const time = now.toLocaleTimeString();
+            document.getElementById('floatingClock').innerText = `${day}, ${time}`;
+        }
+
+        updateFloatingClock();
+        setInterval(updateFloatingClock, 1000);
+    </script>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-gradient shadow-sm">

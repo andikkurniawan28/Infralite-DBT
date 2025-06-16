@@ -77,15 +77,15 @@
                 </div>
             </div>
 
-            {{-- <div class="col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4">
                 <div class="card card-menu h-100">
                     <div class="card-body text-center">
                         <div class="card-icon"><i class="bi bi-folder2-open"></i></div>
-                        <h5 class="card-title">Backup Files</h5>
-                        <button class="btn btn-primary" onclick="showFileManager()">Open</button>
+                        <h5 class="card-title">Backup File</h5>
+                        <a href="{{ route('backup_file.index') }}" class="btn btn-primary">Open</a>
                     </div>
                 </div>
-            </div> --}}
+            </div>
 
 
         </div>

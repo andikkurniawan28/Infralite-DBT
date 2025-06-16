@@ -34,19 +34,19 @@ class ScheduledBackupController extends Controller
             $conn = DatabaseConnection::find($schedule->database_connection_id);
             if (!$conn) continue;
 
-            $alreadyBackedUp = BackupLog::whereDate('created_at', now()->toDateString())
-                ->where('database_connection_id', $conn->id)
-                ->where('method', 'scheduled')
-                ->exists();
+            // $alreadyBackedUp = BackupLog::whereDate('created_at', now()->toDateString())
+            //     ->where('database_connection_id', $conn->id)
+            //     ->where('method', 'scheduled')
+            //     ->exists();
 
-            if ($alreadyBackedUp) {
-                $results[] = [
-                    'schedule_id' => $schedule->id,
-                    'status' => 'skipped',
-                    'message' => 'Already backed up today',
-                ];
-                continue;
-            }
+            // if ($alreadyBackedUp) {
+            //     $results[] = [
+            //         'schedule_id' => $schedule->id,
+            //         'status' => 'skipped',
+            //         'message' => 'Already backed up today',
+            //     ];
+            //     continue;
+            // }
 
             $result = BackupController::run($conn->id);
             $exitCode = $result['exit_code'];
