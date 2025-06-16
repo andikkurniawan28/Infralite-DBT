@@ -71,7 +71,7 @@
 </head>
 
 <body>
-    <div class="floating-clock" id="floatingClock">--:--:--</div>
+    {{-- <div class="floating-clock" id="floatingClock">--:--:--</div> --}}
     <script>
         function updateFloatingClock() {
             const now = new Date();

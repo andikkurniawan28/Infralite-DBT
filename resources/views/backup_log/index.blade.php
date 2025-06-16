@@ -50,7 +50,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('backup_log.index') }}",
-                order: [[4, 'desc']],
+                order: [[5, 'desc']],
                 columns: [{
                         data: 'id',
                         name: 'id',

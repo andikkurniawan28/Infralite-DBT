@@ -14,7 +14,7 @@
             </ol>
         </nav>
 
-        <h4 class="mb-3">Manual Database Backup</h4>
+        <h4 class="mb-3">Manual Backup</h4>
 
         <div class="card shadow-sm">
             <div class="card-body">
