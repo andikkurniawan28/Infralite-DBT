@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class BackupLog extends Model
 {
+    protected $guarded = [];
+
     use HasFactory;
 
     public function database_connection(){

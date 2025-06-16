@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
@@ -33,4 +34,18 @@ Route::post('/manual_backup', [ManualBackupController::class, 'process'])->name(
 Route::get('/backup_log', BackupLogController::class)->name('backup_log.index')->middleware(['auth']);
 Route::resource('/user', UserController::class)->middleware(['auth']);
 Route::resource('/schedule', ScheduleController::class)->middleware(['auth']);
-Route::get('/scheduled_backup/{schedule_id}', [ScheduledBackupController::class, 'process'])->name('scheduled_backup.process');
+Route::get('/scheduled_backup', [ScheduledBackupController::class, 'process'])->name('scheduled_backup.process');
+Route::get('/scheduled_backup/download/{filename}', [ScheduledBackupController::class, 'download'])->name('scheduled_backup.download');
+// Route::get('/backup/files', function () {
+//     $files = Storage::disk('public')->files('tmp');
+//     $fileData = collect($files)->map(function ($file) {
+//         return [
+//             'name' => basename($file),
+//             'url' => asset('storage/' . $file),
+//             'size' => Storage::disk('public')->size($file),
+//             'last_modified' => Storage::disk('public')->lastModified($file),
+//         ];
+//     })->sortByDesc('last_modified')->values();
+//     return response()->json($fileData);
+// })->name('backup.files');
+

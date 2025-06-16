@@ -77,6 +77,68 @@
                 </div>
             </div>
 
+            {{-- <div class="col-sm-6 col-md-4">
+                <div class="card card-menu h-100">
+                    <div class="card-body text-center">
+                        <div class="card-icon"><i class="bi bi-folder2-open"></i></div>
+                        <h5 class="card-title">Backup Files</h5>
+                        <button class="btn btn-primary" onclick="showFileManager()">Open</button>
+                    </div>
+                </div>
+            </div> --}}
+
+
         </div>
     </main>
 @endsection
+
+{{-- @section('script')
+<script>
+    function showFileManager() {
+        fetch(`{{ route('backup.files') }}`)
+            .then(res => res.json())
+            .then(files => {
+                if (files.length === 0) {
+                    return Swal.fire({
+                        icon: 'info',
+                        title: 'No Files',
+                        text: 'There are no backup files available.',
+                        timer: 3000,
+                        toast: true,
+                        position: 'bottom-end',
+                        showConfirmButton: false
+                    });
+                }
+
+                let html = files.map(f => `
+                    <div class="mb-2">
+                        <i class="bi bi-file-earmark-arrow-down"></i>
+                        <strong>${f.name}</strong><br>
+                        <small>${(f.size / 1024).toFixed(1)} KB | ${new Date(f.last_modified * 1000).toLocaleString()}</small><br>
+                        <a class="btn btn-sm btn-success mt-1" href="${f.url}" download>Download</a>
+                    </div>
+                `).join('<hr>');
+
+                Swal.fire({
+                    title: 'Backup Files',
+                    html,
+                    width: 600,
+                    showConfirmButton: false,
+                    focusConfirm: false,
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to load backup files.',
+                    timer: 3000,
+                    toast: true,
+                    position: 'bottom-end',
+                    showConfirmButton: false
+                });
+            });
+    }
+</script>
+@endsection --}}

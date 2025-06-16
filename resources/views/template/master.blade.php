@@ -117,19 +117,72 @@
             });
         @endif
     </script>
-    {{-- <script>
-        function updateCurrentTime() {
-            const now = new Date();
-            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            const day = days[now.getDay()];
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('current-time').textContent = `Today is ${day}, ${hours}:${minutes}`;
+    <script>
+        function checkScheduledBackup() {
+            fetch(`{{ route('scheduled_backup.process') }}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'done') {
+                        if (data.results.length === 0) {
+                            showToast('info', 'No scheduled backups executed.');
+                            return;
+                        }
+
+                        data.results.forEach(result => {
+                            if (result.status === 'success') {
+                                showToast(
+                                    'success',
+                                    `✅ Backup completed for schedule #${result.schedule_id}`,
+                                    `<a href="${result.download_url}" class="btn btn-sm btn-light mt-2" onclick="Swal.close()">Download</a>`,
+                                    false // ❌ Jangan auto-close
+                                );
+                            } else if (result.status === 'fail') {
+                                showToast('error', `❌ Backup failed for schedule #${result.schedule_id}`, '', true);
+                            } else if (result.status === 'skipped') {
+                                showToast('info', `⏭️ Backup skipped for schedule #${result.schedule_id}`, '', true);
+                            }
+                        });
+                    } else if (data.status === 'skipped') {
+                        showToast('info', data.message || 'No scheduled backups to run.', '', true);
+                    } else {
+                        showToast('error', data.message || 'Failed to process backup', '', true);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showToast('error', 'Failed to connect to backup route.', '', true);
+                });
         }
 
-        updateCurrentTime();
-        setInterval(updateCurrentTime, 60000); // update every 1 minute
-    </script> --}}
+        /**
+         * Menampilkan toast dengan pilihan apakah auto-close atau tidak
+         * @param {string} icon - success | error | info
+         * @param {string} title - judul toast
+         * @param {string} htmlContent - konten HTML tambahan
+         * @param {boolean} autoClose - apakah toast ditutup otomatis
+         */
+        function showToast(icon, title, htmlContent = '', autoClose = false) {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: icon,
+                title: title,
+                html: htmlContent,
+                showConfirmButton: !autoClose,
+                confirmButtonText: 'Close',
+                allowOutsideClick: !autoClose,
+                allowEscapeKey: true,
+                timer: autoClose ? 3000 : undefined,
+                timerProgressBar: autoClose
+            });
+        }
+
+        // Jalankan pertama kali
+        checkScheduledBackup();
+        // Jalankan ulang setiap 1 menit
+        setInterval(checkScheduledBackup, 60 * 1000);
+    </script>
+
     @yield('script')
 
 </body>
