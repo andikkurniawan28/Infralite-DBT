@@ -164,7 +164,7 @@
         function showToast(icon, title, htmlContent = '', autoClose = false) {
             Swal.fire({
                 toast: true,
-                position: 'top-end',
+                position: 'bottom-end',
                 icon: icon,
                 title: title,
                 html: htmlContent,
