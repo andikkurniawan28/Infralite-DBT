@@ -69,6 +69,63 @@
                 box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
             }
         }
+
+        .navbar-white-gradient {
+            background: linear-gradient(to right, #ffffff, #f5f5f5);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .navbar-white-gradient .navbar-brand,
+        .navbar-white-gradient .nav-link,
+        .navbar-white-gradient .dropdown-toggle,
+        .navbar-white-gradient .bi {
+            color: #222 !important;
+        }
+
+        .navbar-white-gradient .nav-link:hover,
+        .navbar-white-gradient .dropdown-item:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .footer-white-gradient {
+            background: linear-gradient(to right, #ffffff, #f5f5f5);
+            border-top: 1px solid #ddd;
+            color: #333;
+        }
+
+        .footer-white-gradient small {
+            color: #444;
+        }
+
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.6); /* semi-transparan putih */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            color: #222;
+        }
+        .glassmorphism small {
+            color: #333;
+        }
+
+        .bi {
+            color: #000 !important;
+        }
+
+        /* Override default tombol Bootstrap agar semua menjadi btn-outline-dark */
+        .btn {
+            background-color: transparent !important;
+            color: #212529 !important; /* Bootstrap dark color */
+            border: 1px solid #212529 !important;
+        }
+
+        .btn:hover {
+            background-color: #212529 !important;
+            color: #fff !important;
+        }
+
     </style>
 </head>
 
@@ -76,9 +133,9 @@
     {{-- <div class="floating-clock" id="floatingClock">--:--:--</div> --}}
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-gradient shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light glassmorphism shadow-sm">
         <div class="container-fluid">
-            <i class="bi bi-hdd-fill me-1 fs-1 text-white"></i>
+            <i class="bi bi-hdd-fill me-1 fs-1"></i>
             <a class="navbar-brand fw-bold" href="{{ route('welcome') }}">{{ env('APP_NAME') }}</a>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
@@ -106,7 +163,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer-gradient text-white text-center py-3 mt-auto">
+    <footer class="footer-white-gradient text-center py-3 mt-auto">
         <small>&copy; 2025 {{ env('APP_NAME') }}. All rights reserved.</small>
     </footer>
 
@@ -177,7 +234,7 @@
                                 'No scheduled backups executed.',
                                 '',
                                 true, // auto close
-                                2000  // 2 detik
+                                1500  // 2 detik
                             );
                             return;
                         }

@@ -38,6 +38,18 @@
             color: #1976d2;
             margin-bottom: 0.5rem;
         }
+
+        /* Override default tombol Bootstrap agar semua menjadi btn-outline-dark */
+        .btn {
+            background-color: transparent !important;
+            color: #212529 !important; /* Bootstrap dark color */
+            border: 1px solid #212529 !important;
+        }
+
+        .btn:hover {
+            background-color: #212529 !important;
+            color: #fff !important;
+        }
     </style>
 </head>
 <body>
@@ -46,7 +58,7 @@
             <div class="card shadow-sm p-4" style="min-width: 350px; max-width: 400px; width: 100%;">
                 <div class="text-center mb-4">
                     {{-- <i class="bi bi-shield-lock-fill fs-1 text-primary"></i> --}}
-                    <i class="bi bi-hdd-fill me-1 fs-1 text-primary"></i>
+                    <i class="bi bi-hdd-fill me-1 fs-1 text-dark"></i>
                     <h5 class="mt-2 fw-bold">{{ env('APP_NAME') }}</h5>
                 </div>
 

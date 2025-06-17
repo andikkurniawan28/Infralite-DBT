@@ -37,7 +37,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" id="backupButton">
+                    <button type="submit" class="btn btn-outline-dark" id="backupButton">
                         <i class="bi bi-play-circle me-1"></i> Start Backup
                     </button>
                 </form>

@@ -18,7 +18,7 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4>Database Connections</h4>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">+ Add Connection</button>
+            <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#createModal">+ Add Connection</button>
         </div>
 
         <table class="table table-bordered bg-white shadow-sm">
@@ -45,12 +45,12 @@
                             <span>Connecting...</span>
                         </td>
                         <td>
-                            <a href="{{ route('database_connection.show', $connection->id) }}" class="btn btn-sm btn-info">Info</a>
-                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $connection->id }}">Edit</button>
+                            <a href="{{ route('database_connection.show', $connection->id) }}" class="btn btn-sm btn-outline-dark">Info</a>
+                            <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#editModal{{ $connection->id }}">Edit</button>
                             <form action="{{ route('database_connection.destroy', $connection) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this connection?')">Delete</button>
+                                <button class="btn btn-sm btn-outline-dark" onclick="return confirm('Delete this connection?')">Delete</button>
                             </form>
                         </td>
                     </tr>
@@ -90,7 +90,7 @@
                                         <input type="text" name="schema" value="{{ $connection->schema }}" class="form-control mb-2" placeholder="Schema (optional)">
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-success">Update</button>
+                                        <button type="submit" class="btn btn-outline-dark">Update</button>
                                     </div>
                                 </form>
                             </div>
@@ -136,7 +136,7 @@
                             <input type="text" name="schema" class="form-control mb-2" placeholder="Schema (optional)">
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Create</button>
+                            <button type="submit" class="btn btn-outline-dark">Create</button>
                         </div>
                     </form>
                 </div>
