@@ -24,9 +24,9 @@
         <table class="table table-bordered bg-white shadow-sm">
             <thead class="table-light">
                 <tr>
-                    <th>Type</th>
-                    <th>Host</th>
                     <th>DB Name</th>
+                    <th>Host</th>
+                    <th>Type</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -34,12 +34,12 @@
             <tbody>
                 @foreach ($connections as $connection)
                     <tr>
+                        <td>{{ $connection->db_name }}</td>
+                        <td>{{ $connection->host }}</td>
                         <td>
                             <img src="{{ $connection->database_type->icon }}" alt="{{ $connection->database_type->brand }}" width="20" height="20" class="me-1">
                             {{ $connection->database_type->brand }}
                         </td>
-                        <td>{{ $connection->host }}</td>
-                        <td>{{ $connection->db_name }}</td>
                         <td class="status-cell" data-id="{{ $connection->id }}">
                             <span class="spinner-border spinner-border-sm text-secondary me-1" role="status"></span>
                             <span>Connecting...</span>

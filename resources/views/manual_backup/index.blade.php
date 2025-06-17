@@ -27,8 +27,11 @@
                             <option value="">-- Choose Database Connection --</option>
                             @foreach ($connections as $connection)
                                 <option value="{{ $connection->id }}">
-                                    {{ $connection->database_type->brand }} - {{ $connection->host }} /
                                     {{ $connection->db_name }}
+                                    @php echo '@';@endphp
+                                    {{ $connection->host }}
+                                    -
+                                    {{ $connection->database_type->brand }}
                                 </option>
                             @endforeach
                         </select>

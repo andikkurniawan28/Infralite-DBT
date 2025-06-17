@@ -16,7 +16,7 @@ class BackupLogController extends Controller
             return DataTables::of($logs)
                 ->addIndexColumn()
                 ->addColumn('db_name', function ($row) {
-                    return $row->database_connection->db_name ?? '-';
+                    return $row->database_connection->db_name.'@'.$row->database_connection->host.'-'.$row->database_connection->database_type->brand ?? '-';
                 })
                 ->addColumn('user_name', function ($row) {
                     return $row->user->name ?? '-';

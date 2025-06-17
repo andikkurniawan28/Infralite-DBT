@@ -24,7 +24,11 @@
             <select name="database_connection_id" class="form-control" required>
                 <option value="">-- Select Database --</option>
                 @foreach ($connections as $conn)
-                    <option value="{{ $conn->id }}">{{ $conn->db_name }}</option>
+                    <option value="{{ $conn->id }}">
+                        {{ $conn->db_name }}
+                        @php echo '@';@endphp
+                        {{ $conn->host }}
+                    </option>
                 @endforeach
             </select>
         </div>

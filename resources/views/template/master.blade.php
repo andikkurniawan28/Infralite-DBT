@@ -5,8 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ env('APP_NAME') }}</title>
+
+    <!-- Stylesheets -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
     <style>
         body {
             min-height: 100vh;
@@ -19,10 +23,7 @@
             flex: 1;
         }
 
-        .navbar-gradient {
-            background: linear-gradient(to right, #0d47a1, #1976d2);
-        }
-
+        .navbar-gradient,
         .footer-gradient {
             background: linear-gradient(to right, #0d47a1, #1976d2);
         }
@@ -38,13 +39,12 @@
             color: #1976d2;
             margin-bottom: 0.5rem;
         }
-    </style>
-    <style>
+
         .floating-clock {
             position: fixed;
-            top: 20px; /* jarak dari atas */
-            left: 50%; /* pusat horizontal */
-            transform: translateX(-50%); /* geser ke kiri setengah lebar sendiri */
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.6);
             color: #fff;
             font-family: 'Courier New', Courier, monospace;
@@ -60,9 +60,11 @@
             0% {
                 box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
             }
+
             50% {
                 box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
             }
+
             100% {
                 box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
             }
@@ -72,25 +74,12 @@
 
 <body>
     {{-- <div class="floating-clock" id="floatingClock">--:--:--</div> --}}
-    <script>
-        function updateFloatingClock() {
-            const now = new Date();
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const day = days[now.getDay()];
-            const time = now.toLocaleTimeString();
-            document.getElementById('floatingClock').innerText = `${day}, ${time}`;
-        }
-
-        updateFloatingClock();
-        setInterval(updateFloatingClock, 1000);
-    </script>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-gradient shadow-sm">
         <div class="container-fluid">
-            <i class="bi bi-shield-lock-fill fs-1 text-white"></i>
+            <i class="bi bi-hdd-fill me-1 fs-1 text-white"></i>
             <a class="navbar-brand fw-bold" href="{{ route('welcome') }}">{{ env('APP_NAME') }}</a>
-            {{-- <span id="current-time" class="text-white ms-3 small"></span> --}}
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
@@ -101,7 +90,7 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
-                                @csrf @method('POST')
+                                @csrf
                                 <button type="submit" class="dropdown-item">Logout</button>
                             </form>
                         </li>
@@ -121,8 +110,26 @@
         <small>&copy; 2025 {{ env('APP_NAME') }}. All rights reserved.</small>
     </footer>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function updateFloatingClock() {
+            const now = new Date();
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const day = days[now.getDay()];
+            const time = now.toLocaleTimeString();
+            const clock = document.getElementById('floatingClock');
+            if (clock) {
+                clock.innerText = `${day}, ${time}`;
+            }
+        }
+
+        updateFloatingClock();
+        setInterval(updateFloatingClock, 1000);
+    </script>
+
     <script>
         @if (session('success'))
             Swal.fire({
@@ -153,12 +160,11 @@
                 icon: 'error',
                 title: 'Validation Error',
                 text: errorMessages,
-                customClass: {
-                    popup: 'text-start'
-                }
+                customClass: { popup: 'text-start' }
             });
         @endif
     </script>
+
     <script>
         function checkScheduledBackup() {
             fetch(`{{ route('scheduled_backup.process') }}`)
@@ -166,7 +172,13 @@
                 .then(data => {
                     if (data.status === 'done') {
                         if (data.results.length === 0) {
-                            showToast('info', 'No scheduled backups executed.');
+                            showToast(
+                                'info',
+                                'No scheduled backups executed.',
+                                '',
+                                true, // auto close
+                                2000  // 2 detik
+                            );
                             return;
                         }
 
@@ -176,23 +188,47 @@
                                     'success',
                                     `✅ Backup completed for schedule #${result.schedule_id}`,
                                     `<a href="${result.download_url}" class="btn btn-sm btn-light mt-2" onclick="Swal.close()">Download</a>`,
-                                    false // ❌ Jangan auto-close
+                                    false
                                 );
                             } else if (result.status === 'fail') {
-                                showToast('error', `❌ Backup failed for schedule #${result.schedule_id}`, '', true);
+                                showToast(
+                                    'error',
+                                    `❌ Backup failed for schedule #${result.schedule_id}`,
+                                    '',
+                                    true,
+                                    3000
+                                );
                             } else if (result.status === 'skipped') {
-                                showToast('info', `⏭️ Backup skipped for schedule #${result.schedule_id}`, '', true);
+                                showToast(
+                                    'info',
+                                    `⏭️ Backup skipped for schedule #${result.schedule_id}`,
+                                    '',
+                                    true,
+                                    3000
+                                );
                             }
                         });
                     } else if (data.status === 'skipped') {
-                        showToast('info', data.message || 'No scheduled backups to run.', '', true);
+                        showToast(
+                            'info',
+                            data.message || 'No scheduled backups to run.',
+                            '',
+                            true,
+                            2000
+                        );
                     } else {
-                        showToast('error', data.message || 'Failed to process backup', '', true);
+                        showToast(
+                            'error',
+                            data.message || 'Failed to process backup',
+                            '',
+                            true,
+                            3000
+                        );
                     }
                 })
                 .catch(err => {
                     console.error(err);
-                    showToast('error', 'Failed to connect to backup route.', '', true);
+                    showToast('error', 'Failed to connect to backup route.', '', true, 3000);
                 });
         }
 
@@ -202,8 +238,9 @@
          * @param {string} title - judul toast
          * @param {string} htmlContent - konten HTML tambahan
          * @param {boolean} autoClose - apakah toast ditutup otomatis
+         * @param {number} timeout - durasi timer dalam ms (default 3000 jika autoClose aktif)
          */
-        function showToast(icon, title, htmlContent = '', autoClose = false) {
+        function showToast(icon, title, htmlContent = '', autoClose = false, timeout = 3000) {
             Swal.fire({
                 toast: true,
                 position: 'bottom-end',
@@ -214,7 +251,7 @@
                 confirmButtonText: 'Close',
                 allowOutsideClick: !autoClose,
                 allowEscapeKey: true,
-                timer: autoClose ? 3000 : undefined,
+                timer: autoClose ? timeout : undefined,
                 timerProgressBar: autoClose
             });
         }

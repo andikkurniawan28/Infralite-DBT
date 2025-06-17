@@ -45,7 +45,8 @@
         <div class="d-flex justify-content-center align-items-center" style="min-height: 70vh;">
             <div class="card shadow-sm p-4" style="min-width: 350px; max-width: 400px; width: 100%;">
                 <div class="text-center mb-4">
-                    <i class="bi bi-shield-lock-fill fs-1 text-primary"></i>
+                    {{-- <i class="bi bi-shield-lock-fill fs-1 text-primary"></i> --}}
+                    <i class="bi bi-hdd-fill me-1 fs-1 text-primary"></i>
                     <h5 class="mt-2 fw-bold">{{ env('APP_NAME') }}</h5>
                 </div>
 
