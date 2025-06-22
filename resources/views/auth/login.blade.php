@@ -4,7 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ env('APP_NAME') }}</title>
+    <title>INFRALite-DBT</title>
+      <link rel="icon"
+        type="image/png"
+        href="{{ asset('img/1-removebg-preview.png') }}" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -58,8 +61,10 @@
             <div class="card shadow-sm p-4" style="min-width: 350px; max-width: 400px; width: 100%;">
                 <div class="text-center mb-4">
                     {{-- <i class="bi bi-shield-lock-fill fs-1 text-primary"></i> --}}
-                    <i class="bi bi-hdd-fill me-1 fs-1 text-dark"></i>
-                    <h5 class="mt-2 fw-bold">{{ env('APP_NAME') }}</h5>
+                    <img src="{{ asset('img/1-removebg-preview-crop.png') }}"
+                        alt="INFRALite-TM"
+                        style="height: 24px; object-fit: contain;">
+                    <strong>-DBT</strong>
                 </div>
 
                 <form method="POST" action="{{ route('login_process') }}">
@@ -98,7 +103,7 @@
                 </form>
 
                 <div class="text-center mt-3">
-                    <small class="text-muted">© 2025 {{ env('APP_NAME') }}</small>
+                    <small class="text-muted">© 2025 INFRALite-DBT</small>
                 </div>
             </div>
         </div>
